@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style type="text/css">
+	.acceder { 
+		margin-left: 250px;
+		line-height: 200px;
+		margin-top: -100px;
+		position: absolute;
+		text-align: center;
+		top: 50%;
+		width: 100%;
+	}
+  </style>
+<div class="acceder container">
+	<div class="d-flex flex-column">
+		<p class="h3 m-auto">Debes tener una cuenta para acceder a esta función. </p>
+		<p class="h3 m-auto">
+			<a href="{% url 'register' %}">Registrate</a> o
+			<a href="{% url 'login' %}">Inicia sesión</a>.
+		</p>
+	</div>
+</div>
+
+{% endblock content %}

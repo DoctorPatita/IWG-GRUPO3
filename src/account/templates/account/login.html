@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<style type="text/css">
+    html,
+body {
+  height: 100%;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 1rem;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: 10px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.h3{
+    text-align: center;
+}
+
+.p{
+  text-align: center;
+}
+
+</style>
+
+<main class="form-signin w-100 m-auto">
+    <form method="post">{% csrf_token %}
+      <h1 class="h3 mb-3 fw-normal">Inicio de sesión</h1>
+  
+      <div class="form-floating">
+        <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+        <label for="floatingInput">Email</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Contraseña</label>
+      </div>
+
+        {% for field in login_form %}
+            {% for error in field.errors %}
+                <p style="color: red;">{{error}}</p>               
+            {% endfor%}
+        {% endfor %}
+        
+        {% if login_form.non_field_errors %}
+            <div style="color:red;">
+                <p>{{login_form.non_field_errors}}</p>
+            </div>
+        {% endif %}
+
+      <button class="btn btn-primary w-100 py-2" type="submit">Iniciar sesión</button>
+      <p class="p m-auto p-2"><a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a></p>
+    </form>
+  </main>
+
+
+{% endblock content %}

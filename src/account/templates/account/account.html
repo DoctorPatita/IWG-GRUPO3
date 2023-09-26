@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'account/snippets/configuration_bar.html' %}
+
+<style type="text/css">
+    html,
+body {
+  height: 100%;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 1rem;
+}
+
+.form-signin input[type="file"] {
+  margin-bottom: 10px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: 10px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="text"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.center {
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.h3{
+    text-align: center;
+}
+
+.image {
+	  opacity: 1;
+	  transition: .5s ease;
+	  backface-visibility: hidden;
+	}
+
+.image-group{
+		position: relative;
+  	text-align: center;
+  	cursor:pointer;
+	}
+
+	.image-group:hover .image {
+	  opacity: 0.3;
+	}
+
+	.image-group:hover .middle {
+	  opacity: 1;
+	}
+  .hidden {
+    text-align: center;
+    margin-top: -95px;
+    margin-bottom: 70px;
+  }
+
+
+
+</style>
+
+<main class="form-signin w-100 m-auto">
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+      <h1 class="h3 mb-3 fw-normal">Cuenta</h1>
+
+      <div class="form-group image-group" id="id_image_group">
+        <img src="{{request.user.profile_pic.url}}" id="id_image_display" alt="mdo" width="150" height="150" class="img-fluid image center rounded-circle" >
+          <p class="hidden">Cambiar foto</p>
+      </div>
+      <input id="id_image_file" class="form form-control" type="file" name="profile_pic"  width="150" height="150" onchange="readURL(this)" >
+
+      <div class="form-floating">
+        <input type="email" name="email" class="form-control" id="EmailInput" placeholder="Email" value="{{account_form.initial.email}}">
+        <label for="EmailInput">Email</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" name="username" class="form-control" id="UsernameInput" placeholder="Nombre de usuario" value="{{account_form.initial.username}}">
+        <label for="UsernameInput">Nombre de usuario</label>
+      </div>
+
+        {% for field in account_form %}
+            {% for error in field.errors %}
+                <p style="color: red;">{{error}}</p>               
+            {% endfor%}
+        {% endfor %}
+        
+        {% if account_form.non_field_errors %}
+            <div style="color:red;">
+                <p>{{account_form.non_field_errors}}</p>
+            </div>
+        {% endif %}
+
+        {% if success_message %}
+            <p style="color:green; text-align: center;">{{success_message}}</p>
+        {% endif %}
+
+      <button class="btn btn-primary w-100 py-2" type="submit">Guardar cambios</button>
+    </form>
+  </main>
+
+  <script type="text/javascript">
+    document.getElementById('id_image_group').onclick = function(event){
+        document.getElementById('id_image_file').click();
+      };
+  
+    function readURL(input){
+      var reader = new FileReader();
+      reader.onload = function (e) {
+              $('#id_image_display')
+                  .attr('src', e.target.result)
+          };
+      reader.readAsDataURL(input.files[0]);
+    }
+  </script>
+
+{% endblock content %}
