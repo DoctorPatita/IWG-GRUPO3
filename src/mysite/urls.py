@@ -33,6 +33,9 @@ from account.views import (
     profile_view,
 )
 
+from preguntas import views
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', home_screen_view, name="home"),
@@ -57,6 +60,11 @@ urlpatterns = [
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
      name='password_reset_complete'),
+
+    # Lista de preguntas, Respuestas,
+    path('lista_preguntas/', views.lista_preguntas, name='lista_preguntas'),
+
+
 ]
 #Para guardar archivos en testeo
 if settings.DEBUG:
