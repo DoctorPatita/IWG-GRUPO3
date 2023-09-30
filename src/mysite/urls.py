@@ -37,6 +37,7 @@ from preguntas.views import (
     lista_preguntas,
     detalle_pregunta,
     hacer_pregunta,
+    responder_pregunta,
 
 )
 
@@ -66,12 +67,16 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
      name='password_reset_complete'),
 
-    # Lista de preguntas, Respuestas,
+    # Preguntas y Respuestas
     path('lista_preguntas/', lista_preguntas, name='lista_preguntas'),
     path('pregunta/<int:pregunta_id>/', detalle_pregunta, name='detalle_pregunta'),
     path('hacer_pregunta/', hacer_pregunta, name='hacer_pregunta'),
-    
+    path('pregunta/<int:pregunta_id>/responder/', responder_pregunta, name='responder_pregunta'),
+
+
 ]
+    
+
 #Para guardar archivos en testeo
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

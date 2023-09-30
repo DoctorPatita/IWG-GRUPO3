@@ -22,9 +22,12 @@
                         </ul>
                     </div>
                 </div>
+                
+        
+                <a class="btn btn-success mt-3" href="{% url 'responder_pregunta' pregunta.id %}">Responder</a>
+                
+                <a class="btn btn-primary mt-3" href="{% url 'lista_preguntas' %}">Volver a la lista de preguntas</a>
             </div>
         </div>
     </div>
-    
-    <a class="btn btn-primary mt-3" href="{% url 'lista_preguntas' %}">Volver a la lista de preguntas</a>
 {% endblock %}
