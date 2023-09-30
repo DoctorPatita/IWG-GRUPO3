@@ -21,3 +21,4 @@ class Respuesta(models.Model):
 
     def __str__(self):
         return f'Respuesta a "{self.pregunta.titulo}"'
+    
