@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<style type="text/css">
+	.card{
+		max-width: 700px;
+	}
+	.box{
+		padding:20px;
+	}
+	.cometarios{
+		margin-left: 600px;
+		margin-top: 20px;
+		margin-bottom: -10px;
+	}
+	.añadir{
+		margin-left: 600px;
+		margin-top: 20px;
+	}
+	.borrar{
+		margin-top: 20px;
+	}
+	.primero{
+		margin-left: 900px;
+		margin-top: -63px;
+	}
+	.todavia{
+		margin-top: 20px;
+		margin-left: 600px;
+	}
+</style>
+
+<div class="container box">
+	<div class="row">
+
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<img class="card-img-top" src="{{blog_post.image.url}}">
+			<div class="card-body mt-2 mb-2">
+			  <h2 class="card-title">{{blog_post.title}}</h2>
+			  <p class="card-text">{{blog_post.body|safe}}</p>
+              {% if blog_post.author == request.user %}
+                <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Editar</a>
+              {% endif %}
+			</div>
+			<div class="card-footer text-muted">
+			  Publicado el {{blog_post.date_published}} por {{blog_post.author.username}}, editado por ultima vez el {{blog_post.date_updated}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<h2 class="cometarios">Comentarios ({{ num_comments }})</h2>
+
+{% if not blog_post.comments.all %}
+	<h5 class="todavia">Todavia no hay comentarios...</h5>
+	<a class="primero btn btn-primary" href="{% url 'blog:add-comment' blog_post.slug %}">
+		Se el primero en comentar!
+	</a>
+{% else %}
+<a class="añadir btn btn-primary" href="{% url 'blog:add-comment' blog_post.slug %}">Añadir comentario</a>
+<a class="borrar btn btn-danger" href="{% url 'blog:delete-comment' blog_post.slug %}">Borrar comentario mi ultimo comentario</a>
+	{% for comment in blog_post.comments.all %}
+	<div class="container box">
+        <div class="row">
+            <div class="card m-auto">
+                <div class="card-body mt-2 mb-2">
+                    <h6 class="card-title">
+						<strong>
+						{{ comment.name}} - {{comment.date_published}}
+						</strong>
+					</h6>
+                    <p class="card-text">{{ comment.body }}</p>
+                </div>
+            </div>
+		</div>
+	</div>
+
+	{% endfor %}
+{% endif %}
+
+{% endblock content %}
