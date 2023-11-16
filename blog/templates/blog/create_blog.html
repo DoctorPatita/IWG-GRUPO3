@@ -33,6 +33,17 @@
 					<textarea class="form-control" rows="10" type="text" name="body" id="id_body" placeholder="Este blog es sobre..." required></textarea>
 				</div>
 
+				<!-- organizations-->
+				<div class="form-group">
+					<label for="id_organization"> Organización </label>
+					<select class="form-control" name="organization" id="id_organization">
+						<option> Seleccione una organización </option>
+					{% for member in members %}
+						<option value={{member.organization.name}}>{{member.organization.name}}</option>
+					{% endfor %}
+					</select>	
+				</div>
+	
 				<!-- Image -->
 				<div class="form-group">
 					<label for="id_image">Imagen</label>
@@ -40,10 +51,9 @@
 				</div>
 
 				<!-- Submit btn -->
-				<button class="submit-button btn btn-lg btn-primary btn-block" type="submit">POST</button>
+				<button class="submit-button btn btn-lg btn-primary btn-block" type="submit">Publicar</button>
 			</form>	
 		</div>
 	</div>
 </div>
-
 {% endblock content %}

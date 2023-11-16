@@ -39,6 +39,7 @@
 			<img class="card-img-top" src="{{blog_post.image.url}}">
 			<div class="card-body mt-2 mb-2">
 			  <h2 class="card-title">{{blog_post.title}}</h2>
+			  <h5 class="card-title">Organización: {{blog_post.organization}}</h5>
 			  <p class="card-text">{{blog_post.body|safe}}</p>
               {% if blog_post.author == request.user %}
                 <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Editar</a>
@@ -68,7 +69,7 @@
                 <div class="card-body mt-2 mb-2">
                     <h6 class="card-title">
 						<strong>
-						{{ comment.name}} - {{comment.date_published}}
+						{{comment.name}} - {{comment.date_published}}
 						</strong>
 					</h6>
                     <p class="card-text">{{ comment.body }}</p>

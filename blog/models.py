@@ -4,6 +4,7 @@ from django.db.models.signals import pre_save, post_delete
 from django.utils.text import slugify
 from django.conf import settings
 from django.dispatch import receiver
+from organization.models import Organization
 
 # Create your models here.
 
@@ -16,6 +17,7 @@ def upload_location(instance, filename):
 class BlogPost(models.Model):
 	title 					= models.CharField(max_length=50, null=False, blank=False)
 	body 					= models.TextField(max_length=500, null=False, blank=False)
+	organization			= models.ForeignKey(Organization, related_name='org_post', on_delete=models.CASCADE)
 	image		 			= models.ImageField(upload_to=upload_location, null=True, blank=True)
 	date_published 			= models.DateTimeField(auto_now_add=True, verbose_name="date published")
 	date_updated 			= models.DateTimeField(auto_now=True, verbose_name="date updated")
@@ -25,9 +27,6 @@ class BlogPost(models.Model):
 	def __str__(self):
 		return self.title
 	
-	def total_likes(self):
-		return self.likes.count()
-
 @receiver(post_delete, sender=BlogPost)
 def submission_delete(sender, instance, **kwargs):
     instance.image.delete(False) 

@@ -7,6 +7,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from blog.models import BlogPost, Comment
 from blog.forms import CreateBlogPostForm, UpdateBlogPostForm, AddCommentForm
 from account.models import Usuario
+from organization.models import Member, Organization
 
 BLOG_POSTS_PER_PAGE = 10
 
@@ -14,21 +15,34 @@ BLOG_POSTS_PER_PAGE = 10
 
 def create_blog_view(request):
 
+	request.POST._mutable = True
+
 	context = {}
 
 	user = request.user
 	if not user.is_authenticated:
 		return redirect('must_authenticate')
+	
+	members = Member.objects.filter(user=request.user.username)
+	all_organizations = Organization.objects.all()
 
 	form = CreateBlogPostForm(request.POST or None, request.FILES or None)
+	if request.POST.get('organization', False) == 'Seleccione una organización':
+		request.POST['organization'] = Organization.objects.filter(name='Sin organización asociada').first()
+	else:
+		request.POST['organization'] = Organization.objects.filter(name=request.POST.get('organization', False)).first()
+		print(request.POST['organization'])
 	if form.is_valid():
 		obj = form.save(commit=False)
 		author = Usuario.objects.filter(email=request.user.email).first()
 		obj.author = author
 		obj.save()
 		form = CreateBlogPostForm()
+		return redirect('home')
 
 	context['form'] = form
+	context['members'] = members
+	context['all_organizations'] = all_organizations
 
 	return render(request, 'blog/create_blog.html', context)
 
@@ -149,3 +163,5 @@ def delete_comment(request, slug):
 	comment = Comment.objects.filter(post=blog_post).last()
 	comment.delete()
 	return redirect("http://127.0.0.1:8000/blog/"+slug)
+
+

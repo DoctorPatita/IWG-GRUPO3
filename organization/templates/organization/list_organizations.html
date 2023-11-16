@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Preguntas{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+	h1 {
+        text-align: left;
+        margin-left: 60px;
+        margin-top: 50px;
+    }
+    .list-group{
+        margin-left: 50px;
+    }
+	
+</style>
+
+<h1>Organizaciones</h1 class="">
+
+  <a href="{% url 'create_organization' %}" class="btn btn-primary">Crear organización</a>
+
+    <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-left justify-content-left">
+        <div class="list-group">
+        {% for organization in organizations %}
+          {% if organization.name == 'Sin organización asociada' %}
+          {% else %}
+          <a href="{% url 'detail_organization' organization.name %}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+            <div class="d-flex gap-2 w-100 justify-content-between">
+              <div>
+                <h6 class="mb-0">{{ organization.name }}</h6>
+              </div>
+            </div>
+          </a>
+        {% endif %}
+        {% endfor %}
+        </div>
+      </div>
+      
+{% endblock %}

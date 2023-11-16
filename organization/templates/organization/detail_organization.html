@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<style type="text/css">
+	.card{
+		max-width: 700px;
+	}
+	.box{
+		padding:20px;
+	}
+	.cometarios{
+		margin-left: 600px;
+		margin-top: 20px;
+		margin-bottom: -10px;
+	}
+	.añadir{
+		margin-left: 600px;
+		margin-top: 20px;
+	}
+	.borrar{
+		margin-top: 20px;
+		margin-left: -80px;
+	}
+	.primero{
+		margin-left: 900px;
+		margin-top: -63px;
+	}
+	.todavia{
+		margin-top: 20px;
+		margin-left: 600px;
+	}
+</style>
+
+<div class="container box">
+	<div class="row">
+		<div class="card m-auto">
+			<div class="card-body mt-2 mb-2">
+			  <h2 class="card-title">{{organization.name}}</h2>
+			  <p class="card-text">{{organization.description|safe}}</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<h2 class="cometarios">Miembros ({{ num_members }})</h2>
+
+{% if not organization.members.all %}
+	<h5 class="todavia">Todavia no hay miembros...</h5>
+	<a class="primero btn btn-primary" href="{% url 'add_member' organization.name %}">
+		Se el primero en unirte!
+	</a>
+{% else %}
+	<a class="añadir btn btn-primary" href="{% url 'add_member' organization.name %}">Unirse</a>
+	{% for member in organization.members.all %}
+		{% if member.user == request.user.username %}
+			<a class="borrar btn btn-danger" href="{% url 'remove_member' organization.name %}">Dejar de ser miembro</a>
+		{% endif %}
+	{% endfor %}
+	{% for member in organization.members.all %}
+	<div class="container box">
+        <div class="row">
+            <div class="card m-auto">
+                <div class="card-body mt-2 mb-2">
+                    <h6 class="card-title">
+						<strong>
+						{{ member.user}}
+						</strong>
+					</h6>
+                </div>
+            </div>
+		</div>
+	</div>
+
+	{% endfor %}
+{% endif %}
+
+{% endblock content %}
