@@ -1,37 +1,67 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 <style type="text/css">
-	.card{
-		max-width: 700px;
-	}
-	.box{
-		padding:20px;
-	}
+    .card {
+        max-width: 700px;
+    }
+
+    .box {
+        padding: 20px;
+    }
+
+    /* Estilo adicional para el botón "Like" */
+    .btn-primary.liked {
+        background-color: #dc3545; /* Cambia el color de fondo cuando está liked */
+        border-color: #dc3545;
+    }
 </style>
 
+{% load static %}
+
 <div class="container box">
-	<div class="row">
+    <div class="row">
+        <div class="card m-auto">
+            <img class="card-img-top" src="{{blog_post.image.url}}">
+            <div class="card-body mt-2 mb-2">
+                <h2 class="card-title">{{blog_post.title}}</h2>
+                <p class="card-text">{{blog_post.body|safe}}</p>
+                {% if blog_post.author == request.user %}
+                    <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Editar</a>
+                {% endif %}
 
-		<!-- Blog Post -->
-		<div class="card m-auto">
-			<img class="card-img-top" src="{{blog_post.image.url}}">
-			<div class="card-body mt-2 mb-2">
-			  <h2 class="card-title">{{blog_post.title}}</h2>
-			  <p class="card-text">{{blog_post.body|safe}}</p>
-              {% if blog_post.author == request.user %}
-                <a href="{% url 'blog:edit' blog_post.slug %}" class="btn btn-primary">Editar</a>
-              {% endif %}
-			</div>
-			<div class="card-footer text-muted">
-			  Publicado el {{blog_post.date_published}} por {{blog_post.author.username}}, editado por ultima vez el {{blog_post.date_updated}}
-			</div>
-		</div>
-
-	</div>
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'blog:add_comment' blog_id=blog_post.id %}">
+                        {% csrf_token %}
+                        {{ comentario_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Comentar</button>
+                    </form>
+                {% else %}
+                    <p>Debes estar autenticado para dejar un comentario. <a href="{% url 'login' %}">Inicia sesión</a> o <a href="{% url 'signup' %}">regístrate</a>.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                Publicado el {{blog_post.date_published}} por {{blog_post.author.username}}, editado por última vez el {{blog_post.date_updated}}
+                <p>
+                    <button onclick="like_post({{ blog_post.id }})" class="btn btn-primary btn-like {% if user.is_authenticated and user in blog_post.likes.all %}liked{% endif %}">
+                        {% if user.is_authenticated and user in blog_post.likes.all %}Unlike{% else %}Like{% endif %}
+                </button>
+                <span id="likesCount{{ blog_post.id }}">{{ blog_post.likes.count }}</span> Likes
+                </p>
+            </div>
+            {% include 'blog/comments.html' %}
+        </div>
+    </div>
 </div>
 
-	
-
 {% endblock content %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'custom.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Tu código de inicialización aquí si es necesario.
+        });
+    </script>
+{% endblock scripts %}

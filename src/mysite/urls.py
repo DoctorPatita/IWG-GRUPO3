@@ -38,6 +38,7 @@ from preguntas.views import (
     detalle_pregunta,
     hacer_pregunta,
     responder_pregunta,
+    destacar_respuesta,
 
 )
 
@@ -72,8 +73,7 @@ urlpatterns = [
     path('pregunta/<int:pregunta_id>/', detalle_pregunta, name='detalle_pregunta'),
     path('hacer_pregunta/', hacer_pregunta, name='hacer_pregunta'),
     path('pregunta/<int:pregunta_id>/responder/', responder_pregunta, name='responder_pregunta'),
-
-
+    path('pregunta/<int:pregunta_id>/respuesta/<int:respuesta_id>/destacar/', destacar_respuesta, name='destacar_respuesta'),
 ]
     
 

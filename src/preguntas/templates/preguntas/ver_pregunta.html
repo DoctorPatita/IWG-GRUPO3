@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">{{ pregunta.titulo }}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ pregunta.contenido }}</p>
+                </div>
+            </div>
+
+            <h2 class="mt-4">Respuestas:</h2>
+            <ul class="list-group">
+                {% for respuesta in respuestas %}
+                    <li class="list-group-item">
+                        {{ respuesta.contenido }}
+                        {% if pregunta.autor == request.user and respuesta.destacada %}
+                            <span class="text-success">Respuesta destacada</span>
+                        {% endif %}
+                        {% if pregunta.autor == request.user and not respuesta.destacada %}
+                            <a href="{% url 'destacar_respuesta' respuesta.id %}" class="btn btn-primary">Destacar respuesta</a>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No hay respuestas destacadas aún.</li>
+                {% endfor %}
+            </ul>
+
+            {% if pregunta.respuestas.filter(destacada=True) %}
+                <h2 class="mt-4">Respuesta destacada:</h2>
+                <ul class="list-group">
+                    {% for respuesta in pregunta.respuestas.all %}
+                        {% if respuesta.destacada %}
+                            <li class="list-group-item text-success">
+                                {{ respuesta.contenido }}
+                            </li>
+                        {% endif %}
+                    {% empty %}
+                        <li class="list-group-item">No hay respuesta destacada.</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

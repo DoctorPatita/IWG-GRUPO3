@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from preguntas.models import Pregunta, Respuesta
 from .forms import PreguntaForm, RespuestaForm
 
@@ -57,8 +57,22 @@ def responder_pregunta(request, pregunta_id):
 
     return render(request, 'preguntas/responder_pregunta.html', {'form': form, 'pregunta': pregunta})
 
+def ver_pregunta(request, pregunta_id):
+    pregunta = get_object_or_404(Pregunta, pk=pregunta_id)
+    respuestas = Respuesta.objects.filter(pregunta=pregunta).order_by('-fecha_creacion')
+    
+    return render(request, 'preguntas/ver_pregunta.html', {'pregunta': pregunta, 'respuestas': respuestas})
 
 
+def destacar_respuesta(request, pregunta_id, respuesta_id):
+    respuesta = get_object_or_404(Respuesta, pk=respuesta_id)
+    pregunta = respuesta.pregunta
 
+    # Verificar si el usuario actual es el autor de la pregunta y si la respuesta no está destacada
+    if request.user == pregunta.autor and not respuesta.destacada:
+        # Marcar la respuesta como destacada
+        respuesta.destacada = True
+        respuesta.save()
 
-
+    # Redirigir de vuelta a la página de detalle de la pregunta
+    return redirect('detalle_pregunta', pregunta_id=pregunta.id)

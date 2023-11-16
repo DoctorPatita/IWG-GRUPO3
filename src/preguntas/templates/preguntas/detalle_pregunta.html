@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     Detalle de la Pregunta - {{ pregunta.titulo }}
 {% endblock %}
@@ -12,18 +12,26 @@
                 <p class="lead">{{ pregunta.contenido }}</p>
             </div>
             <div class="col-md-4">
+                <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Respuestas</h5>
                         <ul class="list-group list-group-flush">
                             {% for respuesta in pregunta.respuesta_set.all %}
-                                <li class="list-group-item">{{ respuesta.contenido }}</li>
+                                <li class="list-group-item {% if respuesta.destacada %}respuesta-destacada{% endif %}">
+                                    {{ respuesta.contenido }}
+                                    {% if pregunta.autor == request.user and not respuesta.destacada %}
+                                        <a href="{% url 'destacar_respuesta' pregunta_id=pregunta.id respuesta_id=respuesta.id %}" class="btn btn-primary">Destacar respuesta</a>
+                                    {% endif %}
+                                    {% if respuesta.destacada %}
+                                        <p class="respuesta-destacada">Respuesta destacada</p>
+                                    {% endif %}
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
                 
-        
                 <a class="btn btn-success mt-3" href="{% url 'responder_pregunta' pregunta.id %}">Responder</a>
                 
                 <a class="btn btn-primary mt-3" href="{% url 'lista_preguntas' %}">Volver a la lista de preguntas</a>

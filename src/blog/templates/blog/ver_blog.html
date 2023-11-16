@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style type="text/css">
+    .card {
+        max-width: 700px;
+    }
+    .box {
+        padding: 20px;
+    }
+</style>
+
+<div class="container box">
+    <div class="row">
+        <div class="card m-auto">
+            <img class="card-img-top" src="{{ blog.image.url }}">
+            <div class="card-body mt-2 mb-2">
+                <h2 class="card-title">{{ blog.title }}</h2>
+                <p class="card-text">{{ blog.body|safe }}</p>
+                {% if blog.author == request.user %}
+                    <a href="{% url 'blog:edit' blog.slug %}" class="btn btn-primary">Editar</a>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                Publicado el {{ blog.date_published }} por {{ blog.author.username }},
+                editado por última vez el {{ blog.date_updated }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Comentarios</h3>
+            {% for comentario in blog.comments.all %}
+                {% include 'blog/comment_template.html' %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" action="{% url 'blog:add_comment' blog.id %}">
+                {% csrf_token %}
+                {{ comentario_form.as_p }}
+                <button type="submit" class="btn btn-primary">Comentar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <button onclick="like_post({{ blog.id }})" class="btn btn-primary {% if user_has_liked %}liked{% endif %}">
+                {% if user_has_liked %}Unlike{% else %}Like{% endif %}
+            </button>
+            <span id="likesCount{{ blog.id }}">{{ blog.likes.count }}</span> Likes
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'custom.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Tu código de inicialización aquí si es necesario.
+        });
+    </script>
+{% endblock scripts %}

@@ -1,0 +1,13 @@
+{% if comments %}
+  <h2>Comentarios:</h2>
+  <ul>
+    {% for comment in comments %}
+      <li>
+        <strong>{{ comment.author.username }}</strong> - {{ comment.created_at|date:"F j, Y, P" }}<br>
+        {{ comment.text|linebreaks }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No hay comentarios aún.</p>
+{% endif %}

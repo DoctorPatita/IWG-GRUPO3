@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from operator import attrgetter
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from blog.models import BlogPost
-from blog.forms import CreateBlogPostForm, UpdateBlogPostForm
+from blog.models import BlogPost, Comment
+from blog.forms import CreateBlogPostForm, UpdateBlogPostForm, CommentForm
 from account.models import Usuario
+
+
 
 
 BLOG_POSTS_PER_PAGE = 10
@@ -112,3 +114,78 @@ def get_blog_queryset(query=None):
 
 	# Crear un set unico y luego convertirlo a una lista
 	return list(set(queryset)) 
+
+def add_comment(request, blog_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = BlogPost.objects.get(pk=blog_id)
+            comment.author = request.user
+            comment.save()
+            return redirect('blog:detail', slug=comment.post.slug)  
+
+    
+    return render(request, 'blog/comment_form.html', {'form': form})
+
+def ver_blog(request, blog_id):
+    blog = get_object_or_404(BlogPost, id=blog_id)
+    comments = Comment.objects.filter(post=blog)
+
+    # Verificar si el usuario ha dado like a este blog
+    user_has_liked = False
+    if request.user.is_authenticated:
+        user_has_liked = blog.likes.filter(id=request.user.id).exists()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = blog
+            comment.author = request.user
+            comment.save()
+            return redirect('blog:ver_blog', blog_id=blog.id)
+
+    return render(request, 'blog/ver_blog.html', {'blog': blog, 'comments': comments, 'user_has_liked': user_has_liked})
+
+def detail_blog_view(request, slug):
+    blog_post = get_object_or_404(BlogPost, slug=slug)
+    comments = Comment.objects.filter(post=blog_post)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = blog_post
+            comment.author = request.user
+            comment.save()
+            return redirect('blog:detail', slug=blog_post.slug)
+    else:
+        form = CommentForm()
+    
+    return render(request, 'blog/detail_blog.html', {'blog_post': blog_post, 'comments': comments, 'form': form})
+
+def like_blog_post(request):
+    if request.method == 'POST':
+        blog_id = request.POST.get('blog_id', None)
+        blog = get_object_or_404(BlogPost, id=blog_id)
+        user = request.user
+
+        if blog.likes.filter(id=user.id).exists():
+            blog.likes.remove(user)
+            is_liked = False
+        else:
+            blog.likes.add(user)
+            is_liked = True
+
+        likes_count = blog.likes.count()
+
+        return JsonResponse({'is_liked': is_liked, 'likes_count': likes_count})
+    else:
+        return HttpResponseBadRequest
+    
+def like_post(request, blog_id):
+    blog = get_object_or_404(BlogPost, id=blog_id)
+    blog.likes.add(request.user)
+    likes_count = blog.likes.count()
+    return JsonResponse({'likes_count': likes_count})

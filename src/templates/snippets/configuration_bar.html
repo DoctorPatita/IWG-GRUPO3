@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+
 {% block content %}
 <style type="text/css">
     .breadcrumb-chevron {
@@ -63,13 +65,16 @@
         <li class="breadcrumb-item">
           <a class="link-body-emphasis fw-semibold text-decoration-none" href="{% url 'password_change' %}">Contraseña</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">
-          Data
+        <li class="breadcrumb-item">
+          <a class="link-body-emphasis fw-semibold text-decoration-none" href="{% url 'lista_preguntas' %}">
+            <svg class="bi" width="16" height="16"><use xlink:href="#house-door-fill"></use></svg>
+            Preguntas
+          </a>
         </li>
       </ol>
     </nav>
   </div>
   
   <div class="b-example-divider"></div>
-  {% endblock content %}
-  
+{% endblock content %}
+
